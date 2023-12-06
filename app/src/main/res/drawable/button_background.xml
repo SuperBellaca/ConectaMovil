@@ -1,0 +1,10 @@
+<!-- res/drawable/button_background.xml -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true">
+        <color android:color="#333333" /> <!-- Color cuando el botón está presionado -->
+    </item>
+    <item>
+        <color android:color="#000000" /> <!-- Color predeterminado -->
+    </item>
+
+</selector>
