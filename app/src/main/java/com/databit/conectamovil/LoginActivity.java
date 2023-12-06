@@ -46,10 +46,8 @@ public class LoginActivity extends AppCompatActivity {
                 mAuth.signInWithEmailAndPassword(correoUser, contraUser)
                         .addOnCompleteListener(task -> {
                             if (task.isSuccessful()) {
-                                // Guardar el estado de sesión en SharedPreferences
                                 saveSessionState(true);
 
-                                // Finalizar esta actividad y abrir MainActivity
                                 finish();
                                 startActivity(new Intent(LoginActivity.this, MainActivity.class));
                                 Toast.makeText(LoginActivity.this, "Bienvenido", Toast.LENGTH_SHORT).show();
@@ -63,16 +61,12 @@ public class LoginActivity extends AppCompatActivity {
         cardView.setVisibility(View.VISIBLE);
     }
     private void saveSessionState(boolean isActive) {
-        // Obtener una referencia a SharedPreferences
         SharedPreferences preferences = getSharedPreferences("session", MODE_PRIVATE);
 
-        // Obtener un editor de SharedPreferences para realizar cambios
         SharedPreferences.Editor editor = preferences.edit();
 
-        // Almacenar el estado de la sesión (activo o inactivo)
         editor.putBoolean("is_active", isActive);
 
-        // Aplicar los cambios
         editor.apply();
     }
 
@@ -94,7 +88,6 @@ public class LoginActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         if (isSessionActive()) {
-            // Si la sesión está activa, ir directamente a MainActivity
             startActivity(new Intent(LoginActivity.this, MainActivity.class));
             finish();
         }

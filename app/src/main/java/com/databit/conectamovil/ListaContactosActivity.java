@@ -12,13 +12,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,7 +62,6 @@ public class ListaContactosActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                // Filtrar la lista cuando el texto de búsqueda cambie
                 filtrarListaContactos(charSequence.toString());
             }
 
@@ -73,7 +70,6 @@ public class ListaContactosActivity extends AppCompatActivity {
             }
         });
 
-        // Simular la obtención de la lista de contactos desde Firebase
         obtenerListaContactosDesdeFirebase();
     }
 
@@ -95,20 +91,15 @@ public class ListaContactosActivity extends AppCompatActivity {
         contactosRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                // Limpiar la lista actual antes de agregar los nuevos datos
                 listaCompletaContactos.clear();
 
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    // Obtener datos de Firebase y crear un objeto Contactos
                     Contactos contacto = snapshot.getValue(Contactos.class);
 
-                    // Agregar el contacto a la lista completa
                     if (contacto != null) {
                         listaCompletaContactos.add(contacto);
                     }
                 }
-
-                // Actualizar la lista filtrada y notificar al adaptador
                 listaFiltradaContactos.clear();
                 listaFiltradaContactos.addAll(listaCompletaContactos);
                 contactosAdapter.notifyDataSetChanged();
@@ -116,7 +107,6 @@ public class ListaContactosActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                // Manejar errores al acceder a Firebase
                 Log.e("ListaContactosActivity", "Error al obtener la lista de contactos", databaseError.toException());
             }
         });

@@ -9,13 +9,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -27,14 +24,14 @@ public class MainActivity extends AppCompatActivity {
     Button btn3;
     Button btnCerrarSesion;
     Button btnLimpiarMensajes;
-    Button btnEnviarMensaje;  // Nuevo botón para enviar mensajes
-    EditText edtMensaje;      // Nuevo campo de texto para escribir mensajes
+    Button btnEnviarMensaje;
+    EditText edtMensaje;
     TextView txtMensajes;
 
     private static final String BROKER_URL = "tcp://192.168.1.102:1883";
     private static final String CLIENT_ID = "your_client_id";
-    private static final String USER_ID = "ylr4lsscDMTVm6fSA9o8XOOMkkl2";  // ID del usuario actual
-    private static final String OTHER_USER_ID = "xCkSKl1TfIUQidX0ELIOuAWG4f92";  // ID del otro usuario
+    private static final String USER_ID = "ylr4lsscDMTVm6fSA9o8XOOMkkl2";
+    private static final String OTHER_USER_ID = "xCkSKl1TfIUQidX0ELIOuAWG4f92";
     private DatabaseReference databaseReference;
     private MQTTManager mqttManager;
 
@@ -57,8 +54,8 @@ public class MainActivity extends AppCompatActivity {
         btn3 = findViewById(R.id.btnPerfil);
         btnCerrarSesion = findViewById(R.id.btnCerrarSesion);
         btnLimpiarMensajes = findViewById(R.id.btnLimpiarMensajes);
-        btnEnviarMensaje = findViewById(R.id.btnEnviarMensaje); // Agregado
-        edtMensaje = findViewById(R.id.edtMensaje); // Agregado
+        btnEnviarMensaje = findViewById(R.id.btnEnviarMensaje);
+        edtMensaje = findViewById(R.id.edtMensaje);
         txtMensajes = findViewById(R.id.txtMensajes);
 
         btn1.setOnClickListener(view -> {
@@ -80,10 +77,9 @@ public class MainActivity extends AppCompatActivity {
 
         btnLimpiarMensajes.setOnClickListener(view -> limpiarMensajes());
 
-        btnEnviarMensaje.setOnClickListener(view -> enviarMensaje()); // Agregado
+        btnEnviarMensaje.setOnClickListener(view -> enviarMensaje());
     }
     private void saveMessageToFirebase(String topic, String userId, String message) {
-        // Guarda el mensaje en la base de datos
         databaseReference.child("Chats").child(topic).child(userId).push().setValue(message);
     }
 
@@ -99,11 +95,9 @@ public class MainActivity extends AppCompatActivity {
                 edtMensaje.setText("");
             } else {
                 Log.e("MainActivity", "MQTT Manager not connected");
-                // Agrega más información de registro según sea necesario para entender el flujo de ejecución
             }
         } else {
             Log.e("MainActivity", "Mensaje vacío");
-            // Agrega más información de registro según sea necesario para entender el flujo de ejecución
         }
     }
 

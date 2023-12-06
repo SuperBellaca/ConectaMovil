@@ -3,18 +3,15 @@ package com.databit.conectamovil;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
-
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -50,7 +47,6 @@ public class PerfilActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_perfil);
 
-        // Inicializar Firebase
         firebaseAuth = FirebaseAuth.getInstance();
         databaseReference = FirebaseDatabase.getInstance().getReference();
         userId = firebaseAuth.getCurrentUser().getUid();
@@ -63,10 +59,8 @@ public class PerfilActivity extends AppCompatActivity {
         btnEditarPerfil = findViewById(R.id.btnEditarPerfil);
         imageViewPerfil = findViewById(R.id.imageViewPerfil);
 
-        // Cargar datos del perfil
         cargarDatosPerfil();
 
-        // Configurar listener para el botón de cambiar foto de perfil
         btnCambiarFoto.setOnClickListener(view -> seleccionarNuevaFoto());
 
         btnEditarPerfil.setOnClickListener(view -> {
@@ -84,19 +78,15 @@ public class PerfilActivity extends AppCompatActivity {
                 if (snapshot.exists()) {
                     User usuario = snapshot.getValue(User.class);
 
-                    // Mostrar datos en la interfaz de usuario
                     if (usuario != null) {
                         Correo.setText(usuario.getEmail());
                         Nombre.setText(usuario.getNombre());
                         Apellido.setText(usuario.getApellido());
                         Usuario.setText(usuario.getUsuario());
 
-                        // Verificar si el usuario ha cambiado la foto de perfil
                         if (usuario.getUrlFotoPerfil() != null && !usuario.getUrlFotoPerfil().isEmpty()) {
-                            // El usuario ha cambiado la foto de perfil, cargar desde Firebase Storage
                             cargarImagenDesdeStorage(usuario.getUrlFotoPerfil());
                         } else {
-                            // El usuario no ha cambiado la foto de perfil, cargar la imagen preestablecida
                             imageViewPerfil.setImageResource(R.drawable.padoru);
                         }
                     }
@@ -105,32 +95,26 @@ public class PerfilActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                // Manejar errores en la lectura de datos
                 Log.e("PerfilActivity", "Error al cargar datos del perfil: " + error.getMessage());
             }
         });
     }
 
     private void cargarImagenDesdeStorage(String imageUrl) {
-        // Limpiar la caché de Picasso para la URL anterior
         Picasso.get().invalidate(imageUrl);
 
-        // Puedes usar una biblioteca de carga de imágenes como Picasso
         Picasso.get().load(imageUrl)
                 .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
                 .into(imageViewPerfil, new Callback() {
                     @Override
                     public void onSuccess() {
-                        // Éxito al cargar la imagen desde Storage
                         Log.d("PerfilActivity", "Imagen cargada exitosamente desde Storage");
                     }
 
                     @Override
                     public void onError(Exception e) {
-                        // Manejar errores al cargar la imagen desde Storage
                         Log.e("PerfilActivity", "Error al cargar la imagen desde Storage: " + e.getMessage());
 
-                        // Si hay un error, puedes cargar la imagen predeterminada o realizar alguna otra acción
                         imageViewPerfil.setImageResource(R.drawable.padoru);
                     }
                 });
@@ -154,41 +138,31 @@ public class PerfilActivity extends AppCompatActivity {
     }
 
     private void subirNuevaFoto(Uri filePath) {
-        // Obtener la referencia en Firebase Storage
         StorageReference storageReference = FirebaseStorage.getInstance().getReference();
         StorageReference imageRef = storageReference.child("perfil_imagenes/" + userId + "/imagen.jpg");
 
-        // Subir la imagen
         UploadTask uploadTask = imageRef.putFile(filePath);
         uploadTask.addOnSuccessListener(taskSnapshot -> {
-            // Imagen subida exitosamente
             Toast.makeText(this, "Imagen subida exitosamente", Toast.LENGTH_SHORT).show();
 
-            // Obtener la URL de descarga y actualizar la referencia en Firebase Realtime Database
             imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                // Actualizar la referencia en Firebase Realtime Database con la URL de la imagen
                 DatabaseReference usuarioReference = databaseReference.child("users").child(userId);
                 usuarioReference.child("urlFotoPerfil").setValue(uri.toString());
 
-                // Mostrar la nueva imagen en la interfaz de usuario usando Picasso
                 Picasso.get().load(uri).into(imageViewPerfil, new Callback() {
                     @Override
                     public void onSuccess() {
-                        // Éxito al cargar la nueva imagen
                     }
 
                     @Override
                     public void onError(Exception e) {
-                        // Manejar errores al cargar la nueva imagen
                         Log.e("PerfilActivity", "Error al cargar la nueva imagen: " + e.getMessage());
                     }
                 });
             }).addOnFailureListener(e -> {
-                // Manejar errores en la obtención de la URL de descarga
                 Log.e("PerfilActivity", "Error al obtener la URL de descarga: " + e.getMessage());
             });
         }).addOnFailureListener(e -> {
-            // Manejar errores en la subida de la imagen
             Toast.makeText(this, "Error al subir la imagen", Toast.LENGTH_SHORT).show();
             Log.e("PerfilActivity", "Error al subir la imagen: " + e.getMessage());
         });

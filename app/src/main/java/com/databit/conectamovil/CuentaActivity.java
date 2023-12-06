@@ -55,7 +55,6 @@ public class CuentaActivity extends AppCompatActivity {
             String nicknameUser = editTxTUsuario.getText().toString().trim();
             String emailUser = editTxTEmail.getText().toString().trim();
             String passUser = editTxTPassword.getText().toString().trim();
-            // URL de foto de perfil predeterminada
             String urlFotoPerfil="@drawable/padoru";
 
             if (nameUser.isEmpty() || emailUser.isEmpty() || passUser.isEmpty()) {
@@ -82,7 +81,6 @@ public class CuentaActivity extends AppCompatActivity {
                     mUsersReference.child(id).setValue(user).addOnSuccessListener(unused -> {
                         Toast.makeText(CuentaActivity.this, "Usuario registrado con éxito", Toast.LENGTH_SHORT).show();
                         Log.d("CuentaActivity", "Usuario registrado con éxito");
-                        // Ir a LoginActivity después de registrar con éxito
                         Intent intent = new Intent(CuentaActivity.this, LoginActivity.class);
                         startActivity(intent);
                         finish();

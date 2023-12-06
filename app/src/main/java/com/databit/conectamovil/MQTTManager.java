@@ -5,10 +5,8 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
-
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -57,7 +55,6 @@ public class MQTTManager {
                     saveMessageToFirebase(currentTopic, message);
                 } else {
                     Log.e("MQTTManager", "MQTT Client not connected");
-                    // Agrega más información de registro según sea necesario para entender el flujo de ejecución
                 }
             } catch (MqttException e) {
                 e.printStackTrace();
@@ -65,7 +62,6 @@ public class MQTTManager {
             }
         } else {
             Log.e("MQTTManager", "MQTT Client or topic is null");
-            // Agrega más información de registro según sea necesario para entender el flujo de ejecución
         }
     }
     public void subscribe(String topic) {

@@ -1,7 +1,5 @@
 package com.databit.conectamovil;
 
-// User.java
-
 public class User {
     private String id;
     private String nombre;
@@ -10,11 +8,9 @@ public class User {
     private String email;
     private String contrasenia;
     private String urlFotoPerfil;
-    // Constructor vacío requerido para Firebase
     public User() {
     }
 
-    // Constructor con parámetros
     public User(String id, String nombre, String apellido, String usuario, String email, String contrasenia, String urlFotoPerfil) {
         this.id = id;
         this.nombre = nombre;
@@ -24,8 +20,7 @@ public class User {
         this.contrasenia = contrasenia;
         this.urlFotoPerfil = urlFotoPerfil;
     }
-
-    // Métodos getter y setter (puedes generarlos automáticamente en Android Studio)
+    
     public String getId() {
         return id;
     }
