@@ -13,5 +13,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "ConectaMovil"
+rootProject.name = "ConectaMovil2"
 include(":app")

@@ -1,4 +1,7 @@
-package com.databit.conectamovil;
+package com.databit.conectamovil2;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class User {
     private String id;
@@ -8,7 +11,11 @@ public class User {
     private String email;
     private String contrasenia;
     private String urlFotoPerfil;
+    private List<Mensajes> mensajesEnviados;
+    private List<Mensajes> mensajesRecibidos;
+
     public User() {
+
     }
 
     public User(String id, String nombre, String apellido, String usuario, String email, String contrasenia, String urlFotoPerfil) {
@@ -19,62 +26,53 @@ public class User {
         this.email = email;
         this.contrasenia = contrasenia;
         this.urlFotoPerfil = urlFotoPerfil;
-    }
-    
-    public String getId() {
-        return id;
+        this.mensajesEnviados = new ArrayList<>();
+        this.mensajesRecibidos = new ArrayList<>();
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public String getId() {
+        return id;
     }
 
     public String getNombre() {
         return nombre;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
     public String getApellido() {
         return apellido;
-    }
-
-    public void setApellido(String apellido) {
-        this.apellido = apellido;
     }
 
     public String getUsuario() {
         return usuario;
     }
 
-    public void setUsuario(String usuario) {
-        this.usuario = usuario;
-    }
-
     public String getEmail() {
         return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getContrasenia() {
         return contrasenia;
     }
 
-    public void setContrasenia(String contrasenia) {
-        this.contrasenia = contrasenia;
-    }
-
     public String getUrlFotoPerfil() {
         return urlFotoPerfil;
     }
 
-    public void setUrlFotoPerfil(String urlFotoPerfil) {
-        this.urlFotoPerfil = urlFotoPerfil;
+    public List<Mensajes> getMensajesEnviados() {
+        return mensajesEnviados;
+    }
+
+    public List<Mensajes> getMensajesRecibidos() {
+        return mensajesRecibidos;
+    }
+    private List<Conversacion> conversaciones;
+
+    public void enviarMensaje(User destinatario, String contenido) {
+        Mensajes mensaje = new Mensajes(this, destinatario, contenido);
+        mensajesEnviados.add(mensaje);
+        destinatario.recibirMensaje(mensaje);
+    }
+    public void recibirMensaje(Mensajes mensaje) {
+        mensajesRecibidos.add(mensaje);
     }
 }
-

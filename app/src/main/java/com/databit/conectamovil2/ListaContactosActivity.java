@@ -1,4 +1,4 @@
-package com.databit.conectamovil;
+package com.databit.conectamovil2;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -40,20 +40,25 @@ public class ListaContactosActivity extends AppCompatActivity {
             Intent btn1Intent = new Intent(ListaContactosActivity.this, AgregarContactoActivity.class);
             startActivity(btn1Intent);
         });
-        // Inicializar las listas
+
         listaCompletaContactos = new ArrayList<>();
         listaFiltradaContactos = new ArrayList<>();
 
-        // Configurar el RecyclerView
         recyclerView = findViewById(R.id.recyclerView);
+
+        contactosAdapter = new ContactosAdapter(listaFiltradaContactos);
+        contactosAdapter.setOnContactoClickListener(contacto -> {
+            // Aquí puedes iniciar MainActivity con la información del contacto
+            Intent intent = new Intent(ListaContactosActivity.this, MainActivity.class);
+            intent.putExtra("contacto_usuario", contacto.getUsuario());
+            intent.putExtra("contacto_correo", contacto.getCorreo());
+            startActivity(intent);
+        });
+
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
-
-        // Configurar el adaptador
-        contactosAdapter = new ContactosAdapter(listaFiltradaContactos);
         recyclerView.setAdapter(contactosAdapter);
 
-        // Configurar el EditText de búsqueda
         editTextBuscar = findViewById(R.id.editTextBuscar);
         editTextBuscar.addTextChangedListener(new TextWatcher() {
             @Override

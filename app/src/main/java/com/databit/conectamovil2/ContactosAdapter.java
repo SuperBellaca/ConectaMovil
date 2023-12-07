@@ -1,4 +1,4 @@
-package com.databit.conectamovil;
+package com.databit.conectamovil2;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,9 +11,18 @@ import java.util.List;
 public class ContactosAdapter extends RecyclerView.Adapter<ContactosAdapter.ContactosViewHolder> {
 
     private List<Contactos> listaContactos;
+    private OnContactoClickListener contactoClickListener;
+
+    public interface OnContactoClickListener {
+        void onContactoClick(Contactos contacto);
+    }
 
     public ContactosAdapter(List<Contactos> listaContactos) {
         this.listaContactos = listaContactos;
+    }
+
+    public void setOnContactoClickListener(OnContactoClickListener listener) {
+        this.contactoClickListener = listener;
     }
 
     public static class ContactosViewHolder extends RecyclerView.ViewHolder {
@@ -32,7 +41,16 @@ public class ContactosAdapter extends RecyclerView.Adapter<ContactosAdapter.Cont
     public ContactosViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_contactos, parent, false);
-        return new ContactosViewHolder(itemView);
+
+        ContactosViewHolder viewHolder = new ContactosViewHolder(itemView);
+        itemView.setOnClickListener(view -> {
+            int position = viewHolder.getAdapterPosition();
+            if (position != RecyclerView.NO_POSITION && contactoClickListener != null) {
+                contactoClickListener.onContactoClick(listaContactos.get(position));
+            }
+        });
+
+        return viewHolder;
     }
 
     @Override

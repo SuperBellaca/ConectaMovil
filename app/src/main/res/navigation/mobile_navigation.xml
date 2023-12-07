@@ -8,7 +8,7 @@
 
     <activity
         android:id="@+id/agregarContactoActivity"
-        android:name="com.databit.conectamovil.AgregarContactoActivity"
+        android:name="com.databit.conectamovil2.AgregarContactoActivity"
         android:label="Agregar Contacto"
         tools:layout="@layout/activity_agregar_contacto" />
 

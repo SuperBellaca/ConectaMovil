@@ -1,4 +1,4 @@
-package com.databit.conectamovil;
+package com.databit.conectamovil2;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,6 +40,7 @@ public class PerfilActivity extends AppCompatActivity {
     private Button btnEditarPerfil;
 
     private static final int PICK_IMAGE_REQUEST = 1;
+    private static final int EDITAR_PERFIL_REQUEST_CODE = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,10 +65,23 @@ public class PerfilActivity extends AppCompatActivity {
 
         btnEditarPerfil.setOnClickListener(view -> {
             Intent intent = new Intent(PerfilActivity.this, EditarPerfilActivity.class);
-            startActivity(intent);
+            startActivityForResult(intent, EDITAR_PERFIL_REQUEST_CODE);
         });
+
     }
 
+    public void actualizarInterfazUsuario(User usuario) {
+        Correo.setText(usuario.getEmail());
+        Nombre.setText(usuario.getNombre());
+        Apellido.setText(usuario.getApellido());
+        Usuario.setText(usuario.getUsuario());
+
+        if (usuario.getUrlFotoPerfil() != null && !usuario.getUrlFotoPerfil().isEmpty()) {
+            cargarImagenDesdeStorage(usuario.getUrlFotoPerfil());
+        } else {
+            imageViewPerfil.setImageResource(R.drawable.padoru);
+        }
+    }
 
     private void cargarDatosPerfil() {
         DatabaseReference usuarioReference = databaseReference.child("users").child(userId);

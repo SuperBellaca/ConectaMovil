@@ -1,23 +1,26 @@
-package com.databit.conectamovil;
+package com.databit.conectamovil2;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+
+    private static final String BROKER_URL = "tcp://test.mosquitto.org:1883";
+    private static final String CLIENT_ID = "AndroidFirebase";
+    private DatabaseReference databaseReference;
+    private MQTTManager mqttManager;
 
     Button btn1;
     Button btn2;
@@ -28,12 +31,8 @@ public class MainActivity extends AppCompatActivity {
     EditText edtMensaje;
     TextView txtMensajes;
 
-    private static final String BROKER_URL = "tcp://192.168.1.102:1883";
-    private static final String CLIENT_ID = "your_client_id";
-    private static final String USER_ID = "ylr4lsscDMTVm6fSA9o8XOOMkkl2";
-    private static final String OTHER_USER_ID = "xCkSKl1TfIUQidX0ELIOuAWG4f92";
-    private DatabaseReference databaseReference;
-    private MQTTManager mqttManager;
+    private String usuarioActualId;  // ID del usuario actual, deberías establecer esto al autenticar al usuario
+    private String receptorId;  // ID del usuario con el que estás interactuando
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
         databaseReference = FirebaseDatabase.getInstance().getReference();
         mqttManager = new MQTTManager();
-        mqttManager.connect(BROKER_URL, CLIENT_ID, generateTopic(OTHER_USER_ID));
+        mqttManager.connect(BROKER_URL, CLIENT_ID);
 
         if (savedInstanceState == null) {
             checkSessionAndRedirect();
@@ -78,29 +77,15 @@ public class MainActivity extends AppCompatActivity {
         btnLimpiarMensajes.setOnClickListener(view -> limpiarMensajes());
 
         btnEnviarMensaje.setOnClickListener(view -> enviarMensaje());
-    }
-    private void saveMessageToFirebase(String topic, String userId, String message) {
-        databaseReference.child("Chats").child(topic).child(userId).push().setValue(message);
-    }
 
-    private void enviarMensaje() {
-        String mensaje = edtMensaje.getText().toString().trim();
-        if (!TextUtils.isEmpty(mensaje)) {
-            String topic = generateTopic(OTHER_USER_ID);
 
-            if (mqttManager != null && mqttManager.isConnected()) {
-                mqttManager.publish(mensaje);
-                displayMessage("Tú: " + mensaje);
-                saveMessageToFirebase(topic, USER_ID, mensaje);
-                edtMensaje.setText("");
-            } else {
-                Log.e("MainActivity", "MQTT Manager not connected");
-            }
-        } else {
-            Log.e("MainActivity", "Mensaje vacío");
-        }
+        usuarioActualId = "JeJ6bNREK6RBU0raUM7IB7WWeGB2";
+        receptorId = "8X9TdBMfVuflaPjThWTiefrD0Ew2";
+
+
+        String temaConversacion = "conversacion_" + usuarioActualId + "_" + receptorId;
+        mqttManager.suscribirseATema(temaConversacion);
     }
-
 
     private void checkSessionAndRedirect() {
         if (!isSessionActive()) {
@@ -122,6 +107,21 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = preferences.edit();
         editor.putBoolean("is_active", isActive);
         editor.apply();
+    }
+
+    private void enviarMensaje() {
+        String mensajeTexto = edtMensaje.getText().toString().trim();
+
+        if (!TextUtils.isEmpty(mensajeTexto)) {
+            // Crea un objeto Mensajes y conviértelo a JSON
+            Mensajes mensaje = new Mensajes(new User(), new User(), mensajeTexto);  // Ajusta según tu lógica
+            String temaConversacion = "conversacion_" + usuarioActualId + "_" + receptorId;
+            mqttManager.publicarMensaje(temaConversacion, mensaje);
+
+            edtMensaje.setText("");
+        } else {
+            Toast.makeText(this, "Ingrese un mensaje antes de enviar", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private boolean isSessionActive() {
@@ -159,11 +159,4 @@ public class MainActivity extends AppCompatActivity {
         mqttManager.disconnect();
         super.onDestroy();
     }
-
-    private String generateTopic(String otherUserId) {
-        List<String> userIds = Arrays.asList(USER_ID, otherUserId);
-        Collections.sort(userIds);
-        return TextUtils.join("_", userIds);
-    }
-
 }
